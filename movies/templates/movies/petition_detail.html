@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-8 mx-auto mb-3">
+        <h2>{{ template_data.petition.title }}</h2>
+        <hr/>
+          <p class="text-muted">
+            By {{template_data.petition.proposer.username}} - {{template_data.petition.created_at}}
+          </p>
+          <p>{{ template_data.petition.description | linebreaks }}</p>
+          <p><b>Votes:</b> {{template_data.petition.votes_count}}</p>
+
+          {% if user.is_authenticated %} {% if template_data.user_voted %}
+          <form 
+            method="post"
+            action="{% url 'movies.petition_unvote' id=template_data.petition.id %}"
+          >
+            {% csrf_token %}
+            <button class="btn btn-warning" type="submit">Remove Vote</button>
+          </form>
+          {% else %}
+          <form
+            method="post"
+            action="{% url 'movies.petition_vote' id=template_data.petition.id %}"
+          >
+            {% csrf_token %}
+            <button class="btn btn-success" type="submit">Vote</button>
+          </form>
+          {% endif %} {% else %}
+          <a class="btn btn-primary" href="{% url 'accounts.login' %}"> Login to vote </a>
+          {% endif %}
+
+          <div class="mt-3">
+            <a class="btn btn-secondary" href="{% url 'movies.petitions_index' %}"> Back to petitions </a>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
